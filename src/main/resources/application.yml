@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:learnsphere;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+jwt:
+  secret: "B7f9!dK3pL2x@qR8vZ6mN4sY1wT0hJ5a"
+  expiration-ms: 86400000 # 1 day in ms
+
+# Enable the H2 console
+spring.h2.console.enabled: true
+spring.h2.console.path: /h2-console
