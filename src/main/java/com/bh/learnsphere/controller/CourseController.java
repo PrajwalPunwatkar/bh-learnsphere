@@ -21,9 +21,8 @@ public class CourseController {
     public ResponseEntity<Course> createCourse(@RequestBody Course course, Principal principal) {
         // Example: fetch the instructor (logged-in user) from Principal
         User instructor = new User();
-        instructor.setUsername(principal.getName());
+        instructor.setName(principal.getName());
         course.setInstructor(instructor);
-
         return ResponseEntity.ok(courseService.createCourse(course));
     }
 
