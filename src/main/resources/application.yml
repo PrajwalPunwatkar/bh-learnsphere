@@ -4,9 +4,6 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
-  h2:
-    console:
-      enabled: true
 
 
   jpa:
@@ -27,3 +24,8 @@ jwt:
 # Enable the H2 console
 spring.h2.console.enabled: true
 spring.h2.console.path: /h2-console
+
+storage:
+  video-path: uploads/videos
+  pdf-path: uploads/pdfs
+
