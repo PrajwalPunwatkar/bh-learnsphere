@@ -1,10 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Course Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chat-box { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+        .msg { margin: 5px 0; }
+    </style>
 </head>
 <body>
-$END$
+<h2>Course Chat</h2>
+<div id="chat-box"></div>
+
+<label for="msg"></label>
+<input type="text" id="msg" placeholder="Type a message..." size="50">
+<button onclick="sendMessage()">Send</button>
+
+<script>
+    let chatBox = document.getElementById("chat-box");
+    let socket = new WebSocket("ws://localhost:8080/ws/chat/1"); // courseId=1
+
+    socket.onmessage = function(event) {
+        let msg = JSON.parse(event.data);
+        chatBox.innerHTML += `<div class="msg"><b>${msg.senderId}</b>: ${msg.content}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    function sendMessage() {
+        let text = document.getElementById("msg").value;
+        let msg = { senderId: 1, content: text }; // test senderId=1
+        chatBox.innerText = text;
+        socket.send(JSON.stringify(msg));
+        document.getElementById("msg").value = "";
+    }
+</script>
 </body>
 </html>

@@ -1,10 +1,93 @@
+<!-- proctoring.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Proctoring Lite</title>
+<!--    <script defer src="https://cdn.jsdelivr.net_npm_@tensorflow_tfjs.js"></script>-->
+<!--    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.9.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 </head>
 <body>
+<h3>Proctoring Active</h3>
+<video id="webcam" autoplay playsinline width="300" height="200"></video>
+<div id="status">Detecting...</div>
 
+<script>
+    const video = document.getElementById('webcam');
+    const statusDiv = document.getElementById('status');
+    // Promise.all([
+    //     faceapi.nets.tinyFaceDetector.loadFromUri('/models')
+    // ]).then(startVideo);
+    //
+    // function startVideo() {
+    //     navigator.mediaDevices.getUserMedia({ video: {} })
+    //         .then(stream => video.srcObject = stream)
+    //         .catch(err => console.error("Error accessing webcam:", err));
+    // }
+    //
+    // video.addEventListener('play', () => {
+    //     const interval = setInterval(async () => {
+    //         const detection = await faceapi.detectSingleFace(
+    //             video,
+    //             new faceapi.TinyFaceDetectorOptions()
+    //         );
+    //         if (detection) {
+    //             statusDiv.innerText = "✅ Face detected";
+    //         } else {
+    //             statusDiv.innerText = "⚠️ Face NOT detected!";
+    //             // TODO: send log to backend
+    //         }
+    //     }, 2000);
+    // });
+
+    async function init() {
+        // await Promise.all([
+        //     faceapi.nets.tinyFaceDetector.loadFromUri('/models'), // pre-trained model
+        // ]);
+        await Promise.all([
+             faceapi.nets.tinyFaceDetector.loadFromUri('/proctoring/models')
+
+        ]);
+
+        // Start webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => video.srcObject = stream);
+
+        await detectLoop();
+    }
+
+    async function detectLoop() {
+        const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+
+        if (detection) {
+            statusDiv.innerText = "✅ Face detected";
+            await sendLog(false);
+        } else {
+            statusDiv.innerText = "⚠️ No face detected!";
+            await sendLog(true);
+        }
+
+        setTimeout(detectLoop, 5000); // check every 5s
+    }
+
+    async function sendLog(absent) {
+        if (absent) {
+            await fetch("/api/proctoring/log", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    studentId: 1,   // replace with logged-in student
+                    quizId: 10,    // replace with current quiz
+                    timestamp: new Date(),
+                    message: "Face not detected"
+                })
+            });
+        }
+    }
+
+
+    init();
+</script>
 </body>
 </html>

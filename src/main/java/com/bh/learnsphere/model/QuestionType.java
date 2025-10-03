@@ -1,4 +1,7 @@
 package com.bh.learnsphere.model;
 
-public class QuestionType {
+public enum QuestionType {
+    MCQ,          // Multiple Choice
+    TRUE_FALSE,   // True/False
+    SHORT_ANSWER  // Short text answer
 }

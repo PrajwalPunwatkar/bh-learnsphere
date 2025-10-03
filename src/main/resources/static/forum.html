@@ -2,9 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Course Forum</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #posts { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+        .post { border-bottom: 1px solid #eee; padding: 5px; }
+    </style>
 </head>
 <body>
+<h2>Course Forum</h2>
 
+<div id="posts"></div>
+<label for="content">New Post</label>
+<textarea id="content" rows="3" cols="50" placeholder="Write your post..."></textarea><br>
+<button onclick="submitPost()">Submit</button>
+
+<script>
+    async function loadPosts() {
+        let res = await fetch('/api/forum/posts');
+        let posts = await res.json();
+        let postDiv = document.getElementById("posts");
+        postDiv.innerHTML = "";
+        posts.forEach(p => {
+            postDiv.innerHTML += `<div class="post"><b>${p.authorId}</b>: ${p.content}</div>`;
+        });
+    }
+
+    async function submitPost() {
+        let content = document.getElementById("content").value;
+        await fetch('/api/forum/posts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ authorId: 1, content: content }) // sample authorId
+        });
+        document.getElementById("content").value = "";
+        await loadPosts();
+    }
+
+    loadPosts();
+    setInterval(loadPosts, 5000); // auto-refresh every 5s
+</script>
 </body>
 </html>

@@ -1,4 +1,9 @@
 package com.bh.learnsphere.repository;
 
-public class AssignmentRepository {
+import com.bh.learnsphere.model.Assignment;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
+    List<Assignment> findByCourseId(Long courseId);
 }
